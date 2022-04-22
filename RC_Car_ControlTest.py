@@ -29,30 +29,39 @@ try:
             if char == ord('q'):
                 break
             elif char == curses.KEY_UP:
+                keypress_time = int(time.perf_counter())
                 GPIO.output(movement_forward,True)
                 GPIO.output(movement_backward,False)
                 
             elif char == curses.KEY_DOWN:
+                keypress_time = int(time.perf_counter())
                 GPIO.output(movement_forward,False)
                 GPIO.output(movement_backward,True)
                 
             elif char == curses.KEY_RIGHT:
+                keypress_time = int(time.perf_counter())
                 GPIO.output(steering_right,True)
                 GPIO.output(steering_left,False)
-                #GPIO.output(movement_forward,True)
-                #GPIO.output(movement_backward,False)
                 
             elif char == curses.KEY_LEFT:
+                keypress_time = int(time.perf_counter())
                 GPIO.output(steering_right,False)
                 GPIO.output(steering_left,True)
-                #GPIO.output(movement_forward,True)
-                #GPIO.output(movement_backward,False)
                 
             elif char == ord('s'):
                 GPIO.output(steering_right,False)
                 GPIO.output(steering_left,False)
                 GPIO.output(movement_forward,False)
                 GPIO.output(movement_backward,False)
+            
+            if((int(time.perf_counter())-keypress_time)>2):
+                char = "stop"
+                GPIO.output(steering_right,False)
+                GPIO.output(steering_left,False)
+                GPIO.output(movement_forward,False)
+                GPIO.output(movement_backward,False)
+
+            
 finally:
     #Close down curses properly, inc turn echo back on!
     curses.nocbreak(); screen.keypad(0); curses.echo()
